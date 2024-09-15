@@ -11,7 +11,7 @@ DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 OPENAI_KEY = os.getenv('OPENAI_KEY')
 
 # Set up the OpenAI API client
-client = OpenAI(api_key=OPENAI_KEY)
+openai_client = OpenAI(api_key=OPENAI_KEY)  # OpenAI 클라이언트는 별도의 변수로 설정
 
 # Discord bot setup
 intents = discord.Intents.all()
@@ -29,6 +29,7 @@ system_roles_array = []
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user.name}')
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="테스트"))
 
 @bot.event
 async def on_message(message):
@@ -99,7 +100,7 @@ async def on_message(message):
         else:
             await message.channel.send("질문을 입력해주세요.")
 
-def send_to_chatGpt(system_roles_array,question, model = "gpt-4o-mini"):
+def send_to_chatGpt(system_roles_array,question, model = "gpt-4o-2024-08-06"):
     try:
         # 새로운 질문이 있을 때마다 현재 활성화된 역할을 추가
         messages = [{"role": "system", "content": role} for role in system_roles_array]
@@ -116,7 +117,7 @@ def send_to_chatGpt(system_roles_array,question, model = "gpt-4o-mini"):
         )
 
         # GPT에 질문을 전달하여 답변을 생성
-        completion = client.chat.completions.create(
+        completion = openai_client.chat.completions.create(
             model=model,
             messages=messages,
         )
