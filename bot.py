@@ -170,21 +170,26 @@ async def on_request_gpt(interaction: discord.Interaction, function: str = '대�
             else:
                 await send_message(interaction, '저장된 역할이 없습니다.')
 
+        if not content:
+            await send_message(interaction, '질문을 입력해주세요.')
+            return
+
 def send_to_chatGpt(system_roles_array,question, model = "gpt-4o-2024-08-06"):
     try:
         # 새로운 질문이 있을 때마다 현재 활성화된 역할을 추가
-        messages = [{"role": "system", "content": role} for role in system_roles_array]
+        messages = [{"role": "system", "content": role} for role in system_roles_array if role]
 
-        # 기존 유저와 GPT 간의 대화 내역 추가
-        messages.extend(conversation_history)
+        # 대화 내역 중에서 content가 있는 항목만 추가
+        messages.extend([msg for msg in conversation_history if msg["content"]])
 
-        # 사용자 질문 추가
-        messages.append(
-            {
-                "role": "user",
-                "content": question,
-            }
-        )
+        # 질문이 있는지 확인 후 추가
+        if question:
+
+            # 기존 유저와 GPT 간의 대화 내역 추가
+            messages.extend(conversation_history)
+
+            # 사용자 질문 추가
+            messages.append({"role": "user", "content": question,})
 
         # GPT에 질문을 전달하여 답변을 생성
         completion = openai_client.chat.completions.create(
