@@ -96,7 +96,7 @@ async def on_request_gpt(interaction: discord.Interaction, function: str = '대�
             
     else:
         if function == '대화':
-            if not function and not content:
+            if not content:
                 await send_message(interaction, '질문을 입력해주세요')
                 return
             
@@ -169,10 +169,6 @@ async def on_request_gpt(interaction: discord.Interaction, function: str = '대�
                 
             else:
                 await send_message(interaction, '저장된 역할이 없습니다.')
-
-        if not content:
-            await send_message(interaction, '질문을 입력해주세요.')
-            return
 
 def send_to_chatGpt(system_roles_array,question, model = "gpt-4o-2024-08-06"):
     try:
